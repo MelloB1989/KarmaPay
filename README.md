@@ -1,6 +1,6 @@
 # KarmaPay - The Universal Payment Gateway
 
-![KarmaPay Logo](link_to_logo.png)
+![KarmaPay Logo](https://noobsverse-internal.s3.ap-south-1.amazonaws.com/karmapay-removebg-preview.png)
 
 KarmaPay is an open-source project that aims to simplify online payments by providing a unified API endpoint for multiple payment gateways. It abstracts the complexities of integration, allowing developers to seamlessly work with various payment providers while maintaining a single, consistent interface.
 
