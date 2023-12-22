@@ -1,0 +1,69 @@
+# This "input" configures a global authorization rule to enable public access to
+# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
+input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
+
+type Query {
+    getUser(id: ID!): User
+    getTransaction(id: ID!): Transaction
+    listTransactions(userId: ID!): [Transaction]
+}
+
+type Mutation {
+    createUser(input: CreateUserInput!): User
+    updateUser(id: ID!, input: UpdateUserInput!): User
+    createTransaction(input: CreateTransactionInput!): Transaction
+    updateTransactionStatus(id: ID!, status: TransactionStatus!): Transaction
+}
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    phone: String
+    apiKeys: [APIKey!]!
+    transactions: [Transaction!]!
+}
+
+type APIKey {
+    key: String!
+    service: PaymentService!
+}
+
+type Transaction {
+    id: ID!
+    amount: Float!
+    date: String!
+    status: TransactionStatus!
+    user: User!
+}
+
+enum PaymentService {
+    STRIPE
+    PAYPAL
+    OTHER
+}
+
+enum TransactionStatus {
+    PENDING
+    COMPLETED
+    FAILED
+    REFUNDED
+}
+
+input CreateUserInput {
+    name: String!
+    email: String!
+    phone: String
+}
+
+input UpdateUserInput {
+    name: String
+    email: String
+    phone: String
+}
+
+input CreateTransactionInput {
+    userId: ID!
+    amount: Float!
+    service: PaymentService!
+}
