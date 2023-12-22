@@ -3,12 +3,12 @@ import { logo_url } from '@config'
 import { signUp } from 'aws-amplify/auth'
 import { confirmSignUp } from 'aws-amplify/auth'
 import { autoSignIn } from 'aws-amplify/auth';
-import { useEffect, useState} from 'react'
+import { useState} from 'react'
 import { toast } from 'react-toastify'
 
 import { Amplify } from 'aws-amplify';
 import awsExports from '@/src/aws-exports';
-Amplify.configure(awsExports);
+Amplify.configure({ ...awsExports, ssr: true });
 
 export default function Login(){
   
@@ -40,7 +40,7 @@ export default function Login(){
 
     if(nextStep.signUpStep === 'CONFIRM_SIGN_UP'){
       setConfirm(true)
-      toast.success(`OTP sent to your ${nextStep.codeDeliveryDetails.deliveryMedium}`)
+      toast.success(`OTP sent to your ${nextStep.codeDeliveryDetails.deliveryMedium}. Please check your spam folder.`)
     }
     if(isSignUpComplete) toast.success("Sign up successful!")
   } catch (error) {
@@ -61,6 +61,7 @@ export default function Login(){
     if(nextStep.signUpStep === "COMPLETE_AUTO_SIGN_IN"){
       await autoSignIn()
       //Redirect to dashboard
+      window.location.href = '/dashboard'
     }
   } catch (error) {
     console.log('error confirming sign up', error);
@@ -103,7 +104,7 @@ export default function Login(){
               id="password"
               placeholder="••••••••"
               className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              required=""
+              required={true}
               onChange={(e) => setOTP(e.target.value)}
             />
           </div>
@@ -161,7 +162,7 @@ export default function Login(){
               id="username"
               className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="mellob1989"
-              required="true"
+              required={true}
               onChange={(e) => setUsern(e.target.value)}
             />
           </div>
@@ -177,7 +178,7 @@ export default function Login(){
               id="name"
               className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="John Doe"
-              required="true"
+              required={true}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
@@ -193,7 +194,7 @@ export default function Login(){
               id="phone"
               className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="7777777777"
-              required="true"
+              required={true}
               onChange={(e) => setPh(e.target.value)}
             />
           </div>
@@ -210,7 +211,7 @@ export default function Login(){
               id="email"
               className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="name@company.com"
-              required=""
+              required={true}
               onChange={(e) => setE(e.target.value)}
             />
           </div>
@@ -227,7 +228,7 @@ export default function Login(){
               id="password"
               placeholder="••••••••"
               className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              required=""
+              required={true}
               onChange={(e) => setPass(e.target.value)}
             />
           </div>

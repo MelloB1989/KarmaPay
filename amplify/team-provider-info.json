@@ -16,7 +16,8 @@
         "karmapay": {}
       },
       "auth": {
-        "KarmaPay": {}
+        "KarmaPay": {},
+        "userPoolGroups": {}
       }
     }
   }

@@ -6,11 +6,6 @@ import 'react-toastify/dist/ReactToastify.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
-//Amplify auth configuration
-import { Amplify } from 'aws-amplify';
-import awsExports from '@/src/aws-exports';
-Amplify.configure(awsExports);
-
 export const metadata = {
   metadataBase: 'https://noobsverse-internal.s3.ap-south-1.amazonaws.com/karmapay-removebg-preview.png',
   title: 'KarmaPay',
