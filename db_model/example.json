@@ -1,0 +1,92 @@
+{
+  "email": {
+    "S": "kartikdd90@gmail.com"
+  },
+  "api_keys": {
+    "L": [
+      {
+        "M": {
+          "api_key": {
+            "S": "sdfewrwedff"
+          },
+          "pg_enum": {
+            "S": "RAZORPAY"
+          }
+        }
+      }
+    ]
+  },
+  "business_name": {
+    "S": "Avidia Labs"
+  },
+  "business_url": {
+    "S": "https://avidia.in"
+  },
+  "customers": {
+    "L": [
+      {
+        "M": {
+          "cid": {
+            "S": "rfwe23"
+          },
+          "c_email": {
+            "S": "sda@fa.com"
+          },
+          "c_ip": {
+            "S": "69.69.69.69"
+          },
+          "c_location": {
+            "S": "India"
+          },
+          "c_name": {
+            "S": "Kartik Deshmukh"
+          },
+          "c_phone": {
+            "S": "34244535"
+          }
+        }
+      }
+    ]
+  },
+  "orders": {
+    "L": [
+      {
+        "M": {
+          "order_amt": {
+            "N": "19.69"
+          },
+          "order_cid": {
+            "S": "we32r3"
+          },
+          "order_currency": {
+            "S": "INR"
+          },
+          "order_description": {
+            "S": "This is description"
+          },
+          "order_id": {
+            "S": "4342143-34245-324345-324"
+          },
+          "order_status": {
+            "S": "PENDING"
+          },
+          "order_timestamp": {
+            "S": "Mon 12"
+          },
+          "order_upi_trnx": {
+            "S": "3245645673457"
+          }
+        }
+      }
+    ]
+  },
+  "pfp": {
+    "S": "https://pfp.com"
+  },
+  "subdomain": {
+    "S": "karmapay.edodwaja.com"
+  },
+  "subdomain_status": {
+    "S": "PENDING"
+  }
+}
