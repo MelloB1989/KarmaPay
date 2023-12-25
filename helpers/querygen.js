@@ -1,0 +1,3 @@
+const querygen = (query, params) => {
+  
+}

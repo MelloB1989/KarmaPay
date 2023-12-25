@@ -1,15 +1,15 @@
 import { logo_url } from '@config'
 import { signUp } from 'aws-amplify/auth'
 import { confirmSignUp } from 'aws-amplify/auth'
-import { autoSignIn } from 'aws-amplify/auth';
+import { autoSignIn } from 'aws-amplify/auth'
 import { useState} from 'react'
 import { toast } from 'react-toastify'
+import { useRouter } from 'next/router'
 
-import { Amplify } from 'aws-amplify';
-import awsExports from '@/src/aws-exports';
-Amplify.configure({ ...awsExports, ssr: true });
+export default function Signup(){
 
-export default function Login(){
+  const router = useRouter();
+  const { message, nextUrl } = router.query;
   
   const [username, setUsern] = useState()
   const [password, setPass] = useState()

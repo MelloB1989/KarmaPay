@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { ApolloProvider } from "@apollo/client";
 import apolloClient from "@/helpers/apollo";
 import 'react-toastify/dist/ReactToastify.css';
+import { UserProvider } from '@/components/userContext';
 import Preloader from '@components/preloader';
 
 //Amplify Setup
@@ -20,7 +21,7 @@ export default function MyApp({ Component, pageProps }) {
     let timer = setInterval(function () {
       setLoading(false);
       // $(".preloader").fadeOut("slow");
-    }, 2000);
+    }, 1000);
   });
 
   return (
@@ -65,10 +66,10 @@ export default function MyApp({ Component, pageProps }) {
         {isLoading ? (
           <Preloader/>
         ) : (
-          <>
+          <UserProvider>
             <Component {...pageProps} />
             <ToastContainer />
-          </>
+          </UserProvider>
         )}
       </ApolloProvider>
     </>

@@ -2,6 +2,7 @@ import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { logo_url } from '@config'
+import { signOut } from 'aws-amplify/auth'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', current: true },
@@ -9,6 +10,15 @@ const navigation = [
   { name: 'Your Customers', href: '/dashboard/customers', current: false },
   { name: 'Docs', href: 'https://docs.noobsverse.com/karmapay', current: false },
 ]
+
+const handleSignOut = async () => {
+  try {
+    await signOut({ global: true })
+    window.location.href = "/"
+  } catch (error) {
+    console.log('error signing out: ', error)
+  }
+}
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -113,6 +123,9 @@ export default function Example() {
                           <a
                             href="#"
                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                            onClick={()=>{
+                              handleSignOut()
+                            }}
                           >
                             Sign out
                           </a>

@@ -1,17 +1,33 @@
 import { signIn } from 'aws-amplify/auth';
 import { logo_url } from '@config'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { getCurrentUser } from 'aws-amplify/auth';
 import { toast } from 'react-toastify'
-
-//Amplify auth configuration
-import { Amplify } from 'aws-amplify';
-import awsExports from '@/src/aws-exports';
-Amplify.configure({ ...awsExports, ssr: true });
+import { useRouter } from 'next/router';
 
 export default function Login(){
+
+  const router = useRouter();
+  const { message, nextUrl } = router.query;
   
   const [username, setUsername] = useState()
   const [password, setPassword] = useState()
+  const [error, setError] = useState()
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const { username } = await getCurrentUser();
+        if (username) router.push(nextUrl || "/dashboard");
+        toast.info("You are already logged in!");
+      } catch (err) {
+        //router.push(nextUrl || "/login")
+      }
+    };
+  
+    fetchUser();
+    setError(message);
+  }, [router.query]);
   
   const handleLogin = async(e) => {
     e.preventDefault()
@@ -19,9 +35,10 @@ export default function Login(){
       const { isSignedIn, nextStep } = await signIn({ username, password });
       if(isSignedIn){
         toast.success("Login successful!")
-        window.location.href = "/dashboard"
+        router.push(nextUrl || "/dashboard")
       }
     } catch (error) {
+      setError(error.message)
       console.log('error signing in', error);
     }
   }
@@ -45,6 +62,7 @@ export default function Login(){
         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
           Sign in to your account
         </h1>
+        <p className="text-gray-600 dark:text-gray-200">{error}</p>
         <form className="space-y-4 md:space-y-6" onSubmit={(e)=>handleLogin(e)}>
           <div>
             <label
