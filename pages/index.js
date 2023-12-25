@@ -1,5 +1,4 @@
-import Nav from './nav'
-
+import Nav from '@components/landing/nav'
 export default function Home() {
 
   return (

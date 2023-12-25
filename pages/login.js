@@ -1,4 +1,3 @@
-"use client"
 import { signIn } from 'aws-amplify/auth';
 import { logo_url } from '@config'
 import { useState } from 'react'

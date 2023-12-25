@@ -34,16 +34,17 @@ async function currentSession() {
   }
 }
 */
-import Navbar from './navbar'
-import Dash from './dashboard'
+import Layout from '@layouts/protected'
+import Navbar from '@components/dashboard/navbar'
+import Dash from '@components/dashboard/dashboard'
 
-export default async function Dashboard({ user }){
+export default function Dashboard(){
     return(
-<>
+<Layout>
  <div className="min-h-full bg-white">
  <Navbar/>
 <Dash/>
         </div>
-</>
+</Layout>
         )
 }

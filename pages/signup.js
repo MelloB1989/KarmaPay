@@ -1,4 +1,3 @@
-"use client"
 import { logo_url } from '@config'
 import { signUp } from 'aws-amplify/auth'
 import { confirmSignUp } from 'aws-amplify/auth'

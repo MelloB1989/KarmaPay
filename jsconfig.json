@@ -3,7 +3,8 @@
     "paths": {
       "@/*": ["./*"],
       "@components/*": ["./components/*"],
-      "@config": ["./config"]
+      "@config": ["./config"],
+      "@layouts/*": ["./components/layouts/*"]
     }
   }
 }

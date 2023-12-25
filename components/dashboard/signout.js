@@ -1,4 +1,3 @@
-"use client"
 import { signOut } from 'aws-amplify/auth'
 import { toast } from 'react-toastify'
 
