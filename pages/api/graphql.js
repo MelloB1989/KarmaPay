@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { parse } from 'graphql';
-import verifyToken from '@/lib/jwt_verify';
+//import verifyToken from '@/lib/jwt_verify';
 
 export default async function handler(req, res) {
 if(req.headers.token==="undefined" || (req.body.operationName === "getCoupon" || req.body.operationName === "getCohort" || req.body.operationName === "getInstructor" || req.body.operationName === "listInstructors")){
