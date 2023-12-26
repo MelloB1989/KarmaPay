@@ -6,7 +6,7 @@ import { logo_url } from '@config'
 const navigation = [
   { name: 'Home', href: '#' },
   { name: 'Pricing', href: '#' },
-  { name: 'Contribute', href: '#' },
+  { name: 'Contribute', href: 'https://github.com/mellob1989/karmapay' },
   { name: 'About', href: '#' },
 ]
 
