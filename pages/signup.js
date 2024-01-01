@@ -2,7 +2,7 @@ import { logo_url } from '@config'
 import { signUp } from 'aws-amplify/auth'
 import { confirmSignUp } from 'aws-amplify/auth'
 import { autoSignIn } from 'aws-amplify/auth'
-import { useState} from 'react'
+import { useEffect, useState} from 'react'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import axios from 'axios'
@@ -11,6 +11,13 @@ export default function Signup(){
 
   const router = useRouter();
   const { message, nextUrl } = router.query;
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if(message){
+      setError(message)
+    }
+  }, [router.query]);
   
   const [username, setUsern] = useState()
   const [password, setPass] = useState()
@@ -64,11 +71,12 @@ export default function Signup(){
 
     if(isSignUpComplete) toast.success("Sign up successful!")
     if(nextStep.signUpStep === "COMPLETE_AUTO_SIGN_IN"){
-      const r = await axios.post('/api/signup', {email, uid: userid})
-      console.log(r.data)
+      toast.info("Signing you in...")
+      await axios.post('/api/signup', {email, uid: userid})
+      await axios.post('/api/get_jwt', {email, uid: userid})
       await autoSignIn()
       //Redirect to dashboard
-      window.location.href = '/dashboard'
+      router.push(nextUrl || '/dashboard')
     }
   } catch (error) {
     console.log('error confirming sign up', error);
@@ -156,6 +164,7 @@ export default function Signup(){
         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
           Sign up to a new account
         </h1>
+        <p>{error}</p>
         <form className="space-y-4 md:space-y-6" action="#" onSubmit={(e) => handleSignup(e)}>
         <div>
             <label

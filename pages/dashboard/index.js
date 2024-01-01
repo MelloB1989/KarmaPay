@@ -5,7 +5,7 @@ import Dash from '@components/dashboard/dashboard'
 export default function Dashboard(){
     return(
 <Layout>
- <div className="min-h-full bg-white">
+ <div className="min-h-full">
  <Navbar/>
 <Dash/>
         </div>
