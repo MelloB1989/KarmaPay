@@ -16,6 +16,7 @@ export default function ProtectedPage( { children } ){
                 //console.log(accessToken, idToken)
                 const userAttributes = await fetchUserAttributes();
                 setUserData(userAttributes);
+                console.log(userAttributes)
             } catch (err) {
                 console.log(err);
                 window.location.href = "/login";

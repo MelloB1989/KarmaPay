@@ -5,6 +5,7 @@ import { autoSignIn } from 'aws-amplify/auth'
 import { useState} from 'react'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
+import axios from 'axios'
 
 export default function Signup(){
 
@@ -18,6 +19,7 @@ export default function Signup(){
   const [name, setName] = useState()
   const [otp, setOTP] = useState()
   const [confirm, setConfirm] = useState(false)
+  const [userid, setUserId] = useState()
   
   const handleSignup = async(e) => {
     e.preventDefault()
@@ -37,11 +39,15 @@ export default function Signup(){
       }
     });
 
+    setUserId(userId);
+
     if(nextStep.signUpStep === 'CONFIRM_SIGN_UP'){
       setConfirm(true)
       toast.success(`OTP sent to your ${nextStep.codeDeliveryDetails.deliveryMedium}. Please check your spam folder.`)
     }
-    if(isSignUpComplete) toast.success("Sign up successful!")
+    if(isSignUpComplete){
+      toast.success("Sign up successful!")
+    }
   } catch (error) {
     console.log('error signing up:', error);
     toast.error(error)
@@ -58,6 +64,8 @@ export default function Signup(){
 
     if(isSignUpComplete) toast.success("Sign up successful!")
     if(nextStep.signUpStep === "COMPLETE_AUTO_SIGN_IN"){
+      const r = await axios.post('/api/signup', {email, uid: userid})
+      console.log(r.data)
       await autoSignIn()
       //Redirect to dashboard
       window.location.href = '/dashboard'
