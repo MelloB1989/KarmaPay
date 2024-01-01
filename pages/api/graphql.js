@@ -3,23 +3,8 @@ import { parse } from 'graphql';
 //import verifyToken from '@/lib/jwt_verify';
 
 export default async function handler(req, res) {
-if(req.headers.token==="undefined" || (req.body.operationName === "getCoupon" || req.body.operationName === "getCohort" || req.body.operationName === "getInstructor" || req.body.operationName === "listInstructors")){
-            try {
-                // Forward the request to the GraphQL endpoint
-                const response = await axios.post(GraphQL_endpoint, req.body, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': GraphQL_API_KEY,
-                    },
-                });
-    
-                res.status(200).json(response.data);
-            } catch (error) {
-                console.error('API route error:', error);
-                res.status(error.response?.status || 500).json({ message: error.message });
-            }
-}
-else if (!req.headers.token) {
+
+if (!req.headers.token) {
         res.status(401).json({ error: "No JWT provided, access denied" });
         return;
     }
