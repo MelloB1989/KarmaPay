@@ -5,20 +5,29 @@ import querygen from '@querygen'
 import { UserContext } from '@components/userContext'
 import { useContext, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import Loader from '@/components/loaders/list_load'
 
 export default function Profile() {
     const { userData } = useContext(UserContext)
     const [udata, setData] = useState({})
+    const [apiKeys, setAPIKeys] = useState([])
     const { data, loading, error } = useQuery(querygen("getUser", { email: userData?.email }))
+    const {data: d, loading: l, error: e} = useQuery(querygen("listAPIKeys", { uid: userData?.sub }))
 
     useEffect(() => {
+        if(d) {
+            setAPIKeys(d.listUserAPIKeys.items)
+        }
+        if(e) {
+            toast.error(e)
+        }
         if(data) {
             setData(data.getUser)
         }
         if(error) {
             toast.error(error)
         }
-    }, [data])
+    }, [data, d])
 
     return (
         <Layout>
@@ -35,6 +44,7 @@ export default function Profile() {
                 Your details
               </h3>
             </div>
+            {loading ? (<Loader />) : (
             <div className="border-t border-gray-200">
               <dl>
               <div className="bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -87,6 +97,47 @@ export default function Profile() {
                 </div>
               </dl>
             </div>
+            )}
+          </div>
+        </div>
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+            <div className="px-4 py-5 sm:px-6">
+              <h3 className="text-lg leading-6 font-medium text-gray-300">
+                Your API Keys
+              </h3>
+            </div>
+            {l ? (<Loader />) : (
+            <div className="border-t border-gray-200">
+              <dl>
+                {apiKeys.length > 0 ? apiKeys.map((key) => (
+              <div className="bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt className="text-sm font-medium text-gray-100">
+                    {key.pgEnum}
+                  </dt>
+                  <dd className="mt-1 text-sm text-gray-300 sm:mt-0 sm:col-span-2 flex justify-between items-center">
+                    {key.apiKey}
+                    <button 
+                      className="bg-gray-700 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+                      onClick={() => { navigator.clipboard.writeText(key.apiKey); toast.success("Copied!")}}
+                    >
+                      <img width="10" height="10" src="https://img.icons8.com/office/40/copy.png" alt="copy"/>
+                    </button>
+                  </dd>
+                </div>
+                )):(
+                  <div className="bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt className="text-sm font-medium text-gray-100">
+                    No API Keys
+                  </dt>
+                  <dd className="mt-1 text-sm text-gray-300 sm:mt-0 sm:col-span-2 flex justify-between items-center">
+                    You have no API Keys
+                  </dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+            )}
           </div>
         </div>
         </Layout>

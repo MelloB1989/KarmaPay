@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client';
+import { uuid } from 'uuidv4';
 
 const querygen = (query, params) => {
   if(query === "createUser")
@@ -63,6 +64,47 @@ const querygen = (query, params) => {
       return gql`mutation MyMutation($input: UpdateUserInput!) {
         updateUser(input: $input) {
           email
+        }
+      }`
+  else if(query === "createAPIKey")
+      return gql`mutation MyMutation {
+        createUserAPIKey(input: {uid: \"${params.uid}\", pgEnum: \"${params.pgEnum}\", id: \"${uuid()}\", apiKey: "${params.apiKey}"}) {
+          id
+        }
+      }`
+  else if(query === "listAPIKeys")
+      return gql`query MyQuery {
+        listUserAPIKeys(filter: {uid: {eq: \"${params.uid}\"}}) {
+          items {
+            apiKey
+            id
+            pgEnum
+            uid
+          }
+        }
+      }`
+    else if(query === "updateAPIKey_MO")
+      return gql`mutation MyMutation($input: UpdateUserAPIKeyInput!) {
+        updateUserAPIKey(input: $input) {
+          apiKey
+        }
+      }`
+    else if(query === "createAPIKey_MO")
+      return gql`mutation MyMutation($input: CreateUserAPIKeyInput!) {
+        createUserAPIKey(input: $input) {
+          apiKey
+        }
+      }`
+    else if(query === "listAPIKeys_QO")
+      return gql`query MyQuery($filter: TableUserAPIKeyFilterInput) {
+        listUserAPIKeys(filter: $filter) {
+          items {
+            apiKey
+            id
+            pgEnum
+            uid
+          }
+          nextToken
         }
       }`
 }
