@@ -6,8 +6,26 @@ import querygen from '@querygen'
 import { UserContext } from '@components/userContext'
 import { useContext, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import { uploadData } from 'aws-amplify/storage';
+import { getUrl } from 'aws-amplify/storage';
 
 export default function Settings() {
+
+    const [pfp, setPfp] = useState(null)
+
+    const getUrlResult = async (key) => {
+    const r = await getUrl({
+        key: key,
+        options: {
+          accessLevel: 'public' , // can be 'private', 'protected', or 'guest' but defaults to `guest`
+          validateObjectExistence: false,  // defaults to false
+          expiresIn: 900 // validity of the URL, in seconds. defaults to 900 (15 minutes) and maxes at 3600 (1 hour)
+        },
+      });
+      setPfp(r.url.toString())
+      if(r.url) return r.url.toString();
+      else return null;
+    }
 
     const { userData } = useContext(UserContext)
     const [udata, setData] = useState({})
@@ -20,6 +38,7 @@ export default function Settings() {
     useEffect(() => {
         if(data) {
             setData(data.getUser)
+            getUrlResult(data.getUser?.pfp)
         }
         if(error) {
             toast.error(error)
@@ -29,14 +48,24 @@ export default function Settings() {
     const [updateUser, { data: d, loading: l, error: e }] = useMutation(querygen("updateUser_MO"));
 
     const handleSave = () => {
-        updateUser({ variables: { uid: userData.sub, name, business_name, business_url, subdomain }})
-        .then(response => {
-            toast.success("Saved!");
-            
-        })
-        .catch(err => {
-            toast.error(err.message);
-        });
+        // Ensure all variables are defined
+        if (userData.sub && name || business_name || business_url || subdomain) {
+            let variables = { email: userData.email };
+            if (name !== null && name !== undefined && name !== '') variables.name = name;
+            if (business_name !== null && business_name !== undefined && business_name !== '') variables.business_name = business_name;
+            if (business_url !== null && business_url !== undefined && business_url !== '') variables.business_url = business_url;
+            if (subdomain !== null && subdomain !== undefined && subdomain !== '') variables.subdomain = subdomain;
+
+            updateUser({ variables: { input: variables } })
+            .then(response => {
+                toast.success("Saved!");    
+            })
+            .catch(err => {
+                toast.error(err.message);
+            });
+        } else {
+            toast.error("All fields must be filled out");
+        }
     }
 
     return (
@@ -56,6 +85,49 @@ export default function Settings() {
               </h3>
             </div>
             <div className="border-t border-gray-200">
+            <div className="relative flex justify-center items-end">
+    <img
+      className="w-20 h-20 p-3 rounded-full ring-2 ring-gray-800 dark:ring-gray-800"
+      src={pfp || "https://img.icons8.com/color/48/user-male-circle--v1.png"}
+      alt="image description"
+    />
+    <input type="file" id="file" style={{display: 'none'}} onChange={async ()=>{
+    try {
+        //Upload image to s3 and update pfp
+        const fileInput = document.getElementById("file");
+        if (fileInput && fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const extension = file.name.split('.').pop();
+            const result = await uploadData({
+                key: "profile/"+userData.sub+"."+extension, 
+                data: fileInput.files[0], 
+                options: {
+                    accessLevel: 'public'
+                }
+            }).result;
+            console.log(result);
+            toast.success("Profile picture updated!")
+            await updateUser({ variables: { input: { email: userData.email, pfp: result.key } } });
+            toast.success("Saved!");
+            getUrlResult(result.key);
+        } else {
+            toast.error("No file selected");
+        }
+    } catch (err) {
+        toast.error(err.message);
+    }
+}}/>
+<a href="#" className="absolute bottom-0 mb-1 h-6 w-6" onClick={(e)=>{
+    e.preventDefault();
+    document.getElementById("file").click();
+}}>
+    <img
+      className="absolute bottom-0 mb-1 h-6 w-6"
+      src="https://img.icons8.com/pulsar-line/48/camera.png"
+      alt="camera icon"
+    />
+    </a>
+  </div>
               <dl>
               <div className="bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <label

@@ -1,0 +1,14 @@
+{
+  "resourceName": "s3karmapaystorage1ddbb09e",
+  "bucketName": "karmapay-storage-1ddbb09e",
+  "policyUUID": "293792eb",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ]
+}

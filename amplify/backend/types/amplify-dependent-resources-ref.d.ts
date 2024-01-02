@@ -20,5 +20,11 @@ export type AmplifyDependentResourcesAttributes = {
     "userPoolGroups": {
       "karmausersGroupRole": "string"
     }
+  },
+  "storage": {
+    "s3karmapaystorage1ddbb09e": {
+      "BucketName": "string",
+      "Region": "string"
+    }
   }
 }

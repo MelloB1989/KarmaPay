@@ -68,5 +68,12 @@
       "providerPlugin": "awscloudformation",
       "service": "Cognito-UserPool-Groups"
     }
+  },
+  "storage": {
+    "s3karmapaystorage1ddbb09e": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3"
+    }
   }
 }

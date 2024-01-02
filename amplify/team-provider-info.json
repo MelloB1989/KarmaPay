@@ -18,6 +18,9 @@
       "auth": {
         "KarmaPay": {},
         "userPoolGroups": {}
+      },
+      "storage": {
+        "s3karmapaystorage1ddbb09e": {}
       }
     }
   }

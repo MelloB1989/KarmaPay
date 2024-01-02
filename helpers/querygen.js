@@ -60,7 +60,7 @@ const querygen = (query, params) => {
         }
       }`
   else if(query === "updateUser_MO")
-      return gql`mutation MyMutation($input: CreateUserInput!) {
+      return gql`mutation MyMutation($input: UpdateUserInput!) {
         updateUser(input: $input) {
           email
         }
