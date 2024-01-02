@@ -7,6 +7,9 @@
 .yarn/install-state.gz
 
 /payment_page/node_modules
+/payment_page/.env
+/payment_page/.next
+/payment_page/build
 
 # testing
 /coverage
