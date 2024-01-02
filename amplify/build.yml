@@ -12,6 +12,8 @@ frontend:
         - npm ci
     build:
       commands:
+        - env | grep -e GRAPHQL_ENDPOINT -e GRAPHQL_API_KEY -e GRAPHQL_TOKEN -e JWT_KEY -e JWT_API_KEY -e REDIS_ENDPOINT -e PAYMENT_PAGE_HOST >> .env.production
+        - env | grep -e GRAPHQL_ENDPOINT -e GRAPHQL_API_KEY -e GRAPHQL_TOKEN -e JWT_KEY -e JWT_API_KEY -e REDIS_ENDPOINT -e PAYMENT_PAGE_HOST >> .env
         - node -v
         - npm run build
   artifacts:

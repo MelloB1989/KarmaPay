@@ -142,7 +142,7 @@ export default function Settings() {
         <img width="96" height="96" className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" src="https://img.icons8.com/color/96/checked--v1.png" alt="checked--v1"/>
         <h2>Your API has been generated</h2>
           <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-            {kp}
+          {kp?.slice(0,10)+"****"}
           </h3>
           <p>Please keep it safe, API keys can be viewed only once</p>
           <br/>

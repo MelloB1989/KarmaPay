@@ -116,7 +116,13 @@ export default function Profile() {
                     {key.pgEnum}
                   </dt>
                   <dd className="mt-1 text-sm text-gray-300 sm:mt-0 sm:col-span-2 flex justify-between items-center">
-                    {key.apiKey}
+                    <input
+                    type="text"
+                    id="first_name"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder={key.apiKey === "" ? "API Key Not Set" : key.apiKey.slice(0,10)+"****"}
+                    disabled
+                />
                     <button 
                       className="bg-gray-700 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
                       onClick={() => { navigator.clipboard.writeText(key.apiKey); toast.success("Copied!")}}
