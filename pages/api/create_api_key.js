@@ -17,7 +17,7 @@ export default function createAPIKey(req, res) {
         expiresIn: expiry,
     });
     const base64Token = Buffer.from(token).toString('base64');
-    const prefixedToken = 'karmapay_' + base64Token;
+    const prefixedToken = 'kp_' + base64Token;
 
     res.status(200).json({ prefixedToken });
 }
