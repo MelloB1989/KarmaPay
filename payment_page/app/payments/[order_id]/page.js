@@ -1,7 +1,10 @@
 import { createClient } from "redis";
-import decode from '@/lib/decode_kpapi';
 import dotenv from 'dotenv';
 dotenv.config();
+import Register from './register';
+import { ToastContainer } from "react-toastify";
+import createRazorpayOrder from '@/lib/razorpay/create_order';
+import 'react-toastify/dist/ReactToastify.css';
 
 const client = createClient ({
   url : process.env.REDIS_ENDPOINT //|| env.REDIS_ENDPOINT,
@@ -11,30 +14,53 @@ client.on("error", function(err) {
     throw err;
 });
 
-export default async function Order({ params, searchParams }) {
+export default async function Order({ params }) {
 
     let orderDetails = {};
+    let PGorder = {};
+    let makeC = false;
     const { order_id } = params;
 
     client.connect();
     orderDetails = await client.get(order_id);
-    console.log(orderDetails);
+    //parse the orderDetails
+    orderDetails = JSON.parse(orderDetails);
+    if (!orderDetails) {
+      throw new Error(`No order found with id: ${order_id}`);
+    }
+    
+    const { api_key, kpapi, uid } = orderDetails;
+    let PGapi = Buffer.from(api_key.substring(3), 'base64').toString('ascii');
+    PGapi = JSON.parse(PGapi);
     //await client.disconnect();
 
+    if(orderDetails.order_status === "PENDING"){
+      switch (orderDetails.order_mode) {
+        case "RAZORPAY":
+          //Create a Razorpay order
+          const razorpayOrder = await createRazorpayOrder(PGapi.key, PGapi.secret, orderDetails.order_amt, orderDetails.order_id, orderDetails.order_description);
+          PGorder = razorpayOrder;
+          //Update the Redis order
+          orderDetails.PGorder = razorpayOrder;
+          orderDetails.order_status = "CREATED";
+          await client.set(order_id, JSON.stringify(orderDetails));
+        break;
+      
+        default:
+          console.log("Invalid order mode");
+          break;
+      }
+    }
+    else{
+      PGorder = orderDetails.PGorder;
+    }
+    if(!orderDetails.order_cid === "")
+      makeC = true;
+
     return(
-        <div className="flex items-center justify-center min-h-screen">
-            <a
-                href="#"
-                className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
-            >
-                <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                    Noteworthy technology acquisitions 2021
-                </h5>
-                <p className="font-normal text-gray-700 dark:text-gray-400">
-                    Here are the biggest enterprise technology acquisitions of 2021 so far, in
-                    reverse chronological order.
-                </p>
-            </a>
-        </div>
+      <>
+        <Register uid={uid} kpapi={kpapi} order_details={orderDetails} order_id={order_id} makeC={makeC} RZkey={PGapi.key} />
+        <ToastContainer />
+      </>
     )
 }

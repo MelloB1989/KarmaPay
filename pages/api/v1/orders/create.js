@@ -23,7 +23,17 @@ const graphqlclient = new GraphQLClient(process.env.GRAPHQL_ENDPOINT, {
 
 export default async function createOrder(req, res) {
 
-    const pushToRedis = async (oid, uid, email, order_amt, order_currency, order_description, order_mode, webhook_url, redirect_url) => {
+    //Verify cors
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods','GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    if(req.method === "OPTIONS")
+        return res.status(200).json({});
+    else
+        res.setHeader('Content-Type', 'application/json');
+
+    const pushToRedis = async (oid, uid, email, order_amt, order_currency, order_description, order_mode, webhook_url, redirect_url, kpapi) => {
         //Get the API Key for the order mode
         const apis = await graphqlclient.request(querygen("listAPIKeys", {uid: uid}));
         const api = apis.listUserAPIKeys.items.map((key)=>{
@@ -34,6 +44,7 @@ export default async function createOrder(req, res) {
         await client.set(oid, JSON.stringify({
             uid,
             email,
+            kpapi: kpapi,
             api_key: api.apiKey,
             order_amt,
             order_currency,
@@ -42,7 +53,8 @@ export default async function createOrder(req, res) {
             webhook_url,
             redirect_url,
             order_status: 'PENDING',
-            order_cid: ""
+            order_cid: "",
+            PGorder: {}
         }));
         client.disconnect();
     }
@@ -63,7 +75,7 @@ export default async function createOrder(req, res) {
         const email = decode(KPApiKey).email;
         const oid = uuid();
         //Asynchronously push to Redis to avoid blocking the API and to speed up the response
-        pushToRedis(oid, uid, email, order_amt, order_currency, order_description, order_mode, webhook_url, redirect_url);
+        pushToRedis(oid, uid, email, order_amt, order_currency, order_description, order_mode, webhook_url, redirect_url, KPApiKey);
         return res.status(200).json({ oid });
     } catch(error) {
         console.log(error);

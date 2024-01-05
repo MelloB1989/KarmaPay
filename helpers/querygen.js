@@ -107,6 +107,12 @@ const querygen = (query, params) => {
           nextToken
         }
       }`
+    else if(query === "createCustomer")
+      return gql`mutation MyMutation {
+        createCustomer(input: {c_email: \"${params.email}\", c_ip: \"${params.ip}\", c_location: \"${params.location}\", c_name: \"${params.name}\", c_phone: \"${params.phone}\", cid: \"${uuid()}\", uid: \"${params.uid}\"}) {
+          cid
+        }
+      }`
 }
 
 module.exports = querygen;
