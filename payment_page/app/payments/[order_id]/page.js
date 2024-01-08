@@ -18,7 +18,7 @@ export default async function Order({ params }) {
 
     let orderDetails = {};
     let PGorder = {};
-    let makeC = false;
+    let makeC = true;
     const { order_id } = params;
 
     client.connect();
@@ -55,7 +55,7 @@ export default async function Order({ params }) {
       PGorder = orderDetails.PGorder;
     }
     if(!orderDetails.order_cid === "")
-      makeC = true;
+      makeC = false;
 
     return(
       <>

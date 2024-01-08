@@ -32,7 +32,7 @@ const querygen = (query, params) => {
       }`
   else if(query === "updateOrderStatus")
       return gql`mutation MyMutation {
-        updateOrder(input: {orderID: \"${params.orderID}\", orderStatus: \"${params.orderStatus}\", uid: \"${params.uid}\"}) {
+        updateOrder(input: {orderAmt: 1.5, orderCid: "", orderCurrency: "", orderDescription: "", orderID: "", orderStatus: "", orderUpiTrnx: "", orderTimestamp: "", uid: ""}) {
           orderID
         }
       }`

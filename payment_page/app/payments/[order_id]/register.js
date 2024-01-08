@@ -11,8 +11,24 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [terms, setTerms] = useState(false);
-    const [makec, setMakeC] = useState(makeC ? "make" : "");
+    const [makec, setMakeC] = useState(makeC ? "make" : "pay");
+    const [cid, setCID] = useState("");
     //makeC ---> Register customer
+    
+    //Check if cid cookie exists
+    useEffect(() => {
+      const cookies = document.cookie.split("; ");
+      let _cid = "";
+      cookies.forEach((cookie) => {
+        const [key, value] = cookie.split("=");
+        if(key === "cid") _cid = value;
+      });
+      if(_cid !== ""){ 
+        setMakeC("pay");
+        setCID(_cid);
+      }
+    }, []);
+    
     const [payStatus, setPayStatus] = useState(false);
 
     function loadScript(src) {
@@ -34,7 +50,9 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
         order_id: order,
         payment_id: pay,
         signature: sig,
-        RZKey: RZkey
+        RZKey: RZkey,
+        cid: cid,
+        oid: order_id
       }, {
         headers: {
           "Authorization": "Bearer "+kpapi
@@ -120,7 +138,13 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
         });
         if(res.status === 200){
           toast.update(id, { render: "Customer registered successfully", type: "success", isLoading: false, autoClose: 2000 });
-          setMakeC(true);
+          console.log("CID",res.data.data.createCustomer.cid)
+          setCID(res.data.data.createCustomer.cid);
+          //Set cid, name, email, phone as cookies
+          document.cookie = `cid=${encodeURIComponent(res.data.data.createCustomer.cid)}; max-age=${86400 * 30}; path=/`;
+          document.cookie = `name=${encodeURIComponent(fname+" "+lname)}; max-age=${86400 * 30}; path=/`;
+          document.cookie = `email=${encodeURIComponent(email)}; max-age=${86400 * 30}; path=/`;
+          document.cookie = `phone=${encodeURIComponent(phone)}; max-age=${86400 * 30}; path=/`;
           invoke_payment();
           toast.success("Customer registered successfully");
         }
@@ -132,7 +156,7 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
     }
 
     return(
-      makec === "" ? (
+      makec === "pay" ? (
         <>
         <div>
           <div className="flex items-center justify-center min-h-screen pt-8 pb-8">
@@ -148,7 +172,33 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
       </a>
       <button
     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-    onClick={(e) => invoke_payment()}
+    onClick={(e) => {
+      //Get all values from cookies
+      const cookies = document.cookie.split("; ");
+      let _cid = "";
+      let _name = "";
+      let _email = "";
+      let _phone = "";
+      cookies.forEach((cookie) => {
+        const [key, value] = cookie.split("=");
+        if(key === "cid") _cid = value;
+        else if(key === "name") _name = value;
+        else if(key === "email") _email = value;
+        else if(key === "phone") _phone = value;
+      });
+      if(_cid === "" || _name === "" || _email === "" || _phone === ""){
+        setMakeC("make");
+      }
+      else{
+        console.log("CID",_cid)
+        setFName(_name.split(" ")[0]);
+        setLName(_name.split(" ")[1]);
+        setEmail(_email);
+        setPhone(_phone);
+        setCID(_cid)
+        invoke_payment();
+      }
+    }}
   >
     Proceed to payment
   </button>
@@ -174,7 +224,7 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
           </div>
         </div>
         </>
-      ) : (
+      ) : makec === "make" ? (
         <div className="flex items-center justify-center min-h-screen pt-8 pb-8">
             <div
                 className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
@@ -294,6 +344,8 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
             </div>
         </div>
 
+    ) : (
+      <></>
     )
   )
 }

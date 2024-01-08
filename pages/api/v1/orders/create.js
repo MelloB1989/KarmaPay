@@ -54,7 +54,8 @@ export default async function createOrder(req, res) {
             redirect_url,
             order_status: 'PENDING',
             order_cid: "",
-            PGorder: {}
+            PGorder: {},
+            timestamp: Date.now().toString()
         }));
         client.disconnect();
     }
