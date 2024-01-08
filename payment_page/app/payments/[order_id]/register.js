@@ -12,7 +12,8 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
     const [phone, setPhone] = useState("");
     const [terms, setTerms] = useState(false);
     const [makec, setMakeC] = useState(makeC ? "make" : "");
-    const [payStatus, setPayStatus] = useState(true);
+    //makeC ---> Register customer
+    const [payStatus, setPayStatus] = useState(false);
 
     function loadScript(src) {
       return new Promise((resolve) => {
@@ -29,8 +30,8 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
     }
 
     const verify_payment = async (order, pay, sig) => {
-      const res = await axios.post("https://karmapay.live/api/v1/payment/verify", {
-        order_id: order_id,
+      const res = await axios.post("https://zany-space-umbrella-gpjxp5w67wcwqrj-3000.app.github.dev/api/v1/payment/verify", {
+        order_id: order,
         payment_id: pay,
         signature: sig,
         RZKey: RZkey
@@ -39,6 +40,20 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
           "Authorization": "Bearer "+kpapi
         }
       });
+      if(res.status === 200){
+        if(res.data.data.status === "success"){
+          setPayStatus(true);
+          toast.success("Payment successful");
+        }
+        else{
+          setPayStatus(false);
+          toast.error("Payment failed");
+        }
+        setMakeC("result");
+      }
+      else{
+        toast.error("Could not verify payment");
+      }
     }
 
     const invoke_payment = async () => {
@@ -121,6 +136,23 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
         <>
         <div>
           <div className="flex items-center justify-center min-h-screen pt-8 pb-8">
+          <div
+                className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+            >
+                <a
+      href="/"
+      className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+    >
+      <h1>KarmaPay payments</h1><br/>&nbsp;
+      
+      </a>
+      <button
+    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+    onClick={(e) => invoke_payment()}
+  >
+    Proceed to payment
+  </button>
+      </div>
           </div>
         </div>
         </>
@@ -128,8 +160,17 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
         <>
         <div>
           <div className="flex items-center justify-center min-h-screen pt-8 pb-8">
-            <h1>{payStatus ? "Payment Successful" : "Payment Failed"}</h1>
-            <p>Powered by KarmaPay</p>
+          <div
+                className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+            >
+                <a
+      href="/"
+      className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+    >
+            <h1>{payStatus ? "Payment Successful" : "Payment Failed"}</h1><br/>&nbsp;
+            </a>
+            <p><strong>Powered by KarmaPay</strong></p>
+            </div>
           </div>
         </div>
         </>

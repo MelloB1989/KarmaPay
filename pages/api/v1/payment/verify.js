@@ -32,13 +32,14 @@ export default async function Verify(req, res){
     //const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     
     try{
-        const r = await validatePaymentVerification({order_id, payment_id}, signature, RZKey);
+        const r = await validatePaymentVerification({"order_id": order_id, "payment_id": payment_id}, signature, RZKey);
         let data = {};
-        if(r){
+        if(!r){
             data = {
                 "status": "success",
                 "message": "Payment verified"
             }
+            
         }
         else{
             data = {
