@@ -1,10 +1,9 @@
 const { validatePaymentVerification } = require("razorpay/dist/utils/razorpay-utils");
 
 const VerifyPayment = async (razorpay_order_id, razorpay_payment_id, razorpay_signature, secret) => {
-    let validity = false;
+    let validity = null;
     try{
-        const validity = await validatePaymentVerification({"order_id": razorpay_order_id, "payment_id": razorpay_payment_id }, razorpay_signature, secret);
-        validity = true;
+        validity = await validatePaymentVerification({"order_id": razorpay_order_id, "payment_id": razorpay_payment_id }, razorpay_signature, secret);
     } catch(e){
         console.log(e);
     }
