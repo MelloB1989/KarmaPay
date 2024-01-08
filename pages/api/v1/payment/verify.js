@@ -1,6 +1,15 @@
+/**
+ * AUTHOR: MelloB
+ * 
+ * @param {string} order_id
+ * @param {string} payment_id
+ * @param {string} signature
+ * @param {string} RZKey
+ * @description Verify Razorpay payment
+ */
 import VerifyPayment from "@/payment_page/lib/razorpay/verify_payment";
 
-export default function Verify(req, res){
+export default async function Verify(req, res){
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods','GET,OPTIONS,PATCH,DELETE,POST,PUT');
