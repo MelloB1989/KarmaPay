@@ -6,6 +6,7 @@
       "@config": ["./config"],
       "@layouts/*": ["./components/layouts/*"],
       "@querygen": ["./helpers/querygen"],
+      "@paymentlibrary/*": ["./payment_page/lib/*"]
     }
   }
 }

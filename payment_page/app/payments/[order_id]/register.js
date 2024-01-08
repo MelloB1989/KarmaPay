@@ -2,6 +2,7 @@
 import { logo_url } from '@/config'
 import { useEffect, useState } from 'react'
 import { toast } from "react-toastify";
+import axios from 'axios';
 
 export default function Register({ uid, kpapi, order_details, order_id, makeC, RZkey }){
 
@@ -10,7 +11,35 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [terms, setTerms] = useState(false);
-    const [makec, setMakeC] = useState(makeC);
+    const [makec, setMakeC] = useState(makeC ? "make" : "");
+    const [payStatus, setPayStatus] = useState(true);
+
+    function loadScript(src) {
+      return new Promise((resolve) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = () => {
+          resolve(true);
+        };
+        script.onerror = () => {
+          resolve(false);
+        };
+        document.body.appendChild(script);
+      });
+    }
+
+    const verify_payment = async (order, pay, sig) => {
+      const res = await axios.post("https://karmapay.live/api/v1/payment/verify", {
+        order_id: order_id,
+        payment_id: pay,
+        signature: sig,
+        RZKey: RZkey
+      }, {
+        headers: {
+          "Authorization": "Bearer "+kpapi
+        }
+      });
+    }
 
     const invoke_payment = async () => {
       const res = await loadScript(
@@ -28,7 +57,7 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
         //amount: course_price+"00",
         amount: order_details.order_amt+"00",
         order_id: order_details.PGorder.id,
-        name: course_name,
+        name: "KarmaPay Payments",
         description: "Avidia Labs",
         image: logo_url,
         handler: function (response) {
@@ -40,13 +69,13 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
           const sig = response.razorpay_signature;
           const pay = response.razorpay_payment_id;
           //console.log("RESPONSE"+sig);
-          verify_payment(order, pay, sig);
+          verify_payment(order_details.PGorder.id, pay, sig);
         },
         theme: {
-      color: "#e66909",
+      color: "#0d4aba",
     },
         prefill: {
-          name: first_name + last_name,
+          name: fname + lname,
           email: email,
           phone_number: phone,
         },
@@ -57,40 +86,50 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
     }
 
     const handleCRegister = async (e) => {
+      if(!last_name || !first_name || !email || !phone)
+        toast.error("Please fill all the details");
       e.preventDefault();
       if(!terms) toast.error("Please agree to the terms and conditions");
       else{
-        const res = await fetch('/api/v1/orders/create', {
-          method: 'POST',
+        const id = toast.loading("Registering customer...");
+        const res = await axios.post("https://karmapay.live/api/v1/customer/register", {
+          first_name: fname,
+          last_name: lname,
+          email: email,
+          phone: phone,
+          uid: uid
+        }, {
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': kpapi
-          },
-          body: JSON.stringify({
-            order_amt: order_details.order_amt,
-            order_currency: order_details.order_currency,
-            order_description: order_details.order_description,
-            order_mode: order_details.order_mode,
-            webhook_url: order_details.webhook_url,
-            redirect_url: order_details.redirect_url
-          })
+            "Authorization": "Bearer "+kpapi
+          }
         });
-        const { oid } = await res.json();
-        if(oid){
-          toast.success("Order created successfully");
+        if(res.status === 200){
+          toast.update(id, { render: "Customer registered successfully", type: "success", isLoading: false, autoClose: 2000 });
+          setMakeC(true);
           invoke_payment();
+          toast.success("Customer registered successfully");
         }
         else{
-          toast.error("Something went wrong. Please try again later");
+          toast.update(id, { render: res.data.error, type: "error", isLoading: false, autoClose: 2000 });
+          toast.error("Could not register customer");
         }
       }
     }
 
     return(
-      makec ? (
+      makec === "" ? (
         <>
         <div>
           <div className="flex items-center justify-center min-h-screen pt-8 pb-8">
+          </div>
+        </div>
+        </>
+      ) : makec === "result" ? (
+        <>
+        <div>
+          <div className="flex items-center justify-center min-h-screen pt-8 pb-8">
+            <h1>{payStatus ? "Payment Successful" : "Payment Failed"}</h1>
+            <p>Powered by KarmaPay</p>
           </div>
         </div>
         </>
@@ -110,7 +149,7 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
       />
       KarmaPay
     </a>
-                <form action={handleCRegister}>
+                <form action={(e) => handleCRegister(e)}>
                 <h3 className="text-md font-bold leading-tight tracking-tight text-gray-900 md:text-md dark:text-white">
           Please fill the details to continue your payment
         </h3>
@@ -206,11 +245,11 @@ export default function Register({ uid, kpapi, order_details, order_id, makeC, R
   <button
     type="submit"
     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+    onClick={(e) => handleCRegister(e)}
   >
     Submit
   </button>
 </form>
-
             </div>
         </div>
 
