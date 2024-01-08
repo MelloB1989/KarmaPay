@@ -7,7 +7,7 @@
  * @param {string} RZKey
  * @description Verify Razorpay payment
  */
-import VerifyPayment from "@/payment_page/lib/razorpay/verify_payment";
+import { validatePaymentVerification } from "razorpay/dist/utils/razorpay-utils";
 
 export default async function Verify(req, res){
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -32,7 +32,7 @@ export default async function Verify(req, res){
     //const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     
     try{
-        const r = await VerifyPayment(order_id, payment_id, signature, RZKey);
+        const r = await validatePaymentVerification({order_id, payment_id}, signature, RZKey);
         let data = {};
         if(r){
             data = {
@@ -46,7 +46,7 @@ export default async function Verify(req, res){
                 "message": "Payment verification failed"
             }
         }
-        res.status(200).json({ data });
+        res.status(200).json({ data, v: r });
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
