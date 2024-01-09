@@ -10,6 +10,8 @@
 import { validatePaymentVerification } from "razorpay/dist/utils/razorpay-utils";
 import redis from '@/lib/redis';
 import querygen from '@querygen';
+import dotenv from 'dotenv';
+dotenv.config();
 import { GraphQLClient } from 'graphql-request';
 
 const graphqlclient = new GraphQLClient(process.env.GRAPHQL_ENDPOINT, {

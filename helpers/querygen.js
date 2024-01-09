@@ -113,6 +113,20 @@ const querygen = (query, params) => {
           cid
         }
       }`
+    else if(query === "getOrder")
+      return gql`query MyQuery {
+        getOrder(orderID: \"${params.order_id}\", uid: \"${params.uid}\") {
+          orderAmt
+          orderCid
+          orderCurrency
+          orderDescription
+          orderStatus
+          orderID
+          uid
+          orderUpiTrnx
+          orderTimestamp
+        }
+      }`
 }
 
 module.exports = querygen;
