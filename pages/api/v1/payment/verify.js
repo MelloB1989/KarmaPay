@@ -22,10 +22,11 @@ export default async function Verify(req, res){
 
     const pushToDB = async(oid, cid) => {
         const client = await redis();
-        const orderDetails = await client.get(oid);
+        let orderDetails = await client.get(oid);
+        orderDetails = JSON.parse(orderDetails);
         await client.del(oid);
         await graphqlclient.request(querygen("createOrder", {
-            orderAmt: orderDetails.order_amt,
+            orderAmt: parseInt(orderDetails.order_amt, 10),
             orderCid: cid,
             orderCurrency: orderDetails.order_currency,
             orderDescription: orderDetails.order_description,
